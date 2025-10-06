@@ -66,10 +66,13 @@ if st.button("🔍 Validar archivos") and all([batch_file, deposit_file, fund_fi
     def validar_bl(bl_value, bl_no_column):
         if pd.isna(bl_value):
             return "NO"
-        try:
-            bl_int = int(bl_value)
-            if bl_int in bl_no_column.dropna().astype(int).values:
-                return "OK"
+try:
+    bl_int = int(bl_value)
+    if bl_int in bl_no_column.dropna().astype(int).values:
+        return "OK"
+except:
+    return "ERROR"
+
 def detectar_duplicados(df, columnas):
     duplicados = []
     for i, row in df.iterrows():
