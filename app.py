@@ -38,6 +38,8 @@ def detectar_duplicados(df, columnas):
     for i, row in df.iterrows():
         duplicadas = []
         for col in columnas:
+            if col not in df.columns:
+                continue
             if df[col].duplicated(keep=False)[i]:
                 duplicadas.append(col)
         duplicados.append(", ".join(duplicadas) if duplicadas else "OK")
