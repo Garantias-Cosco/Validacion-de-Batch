@@ -7,7 +7,7 @@ st.title("📊 Validador de Pagos - Comparación de Archivos Excel")
 st.markdown("### 1. Carga de archivos")
 
 # Carga de archivos
-batch_file = st.file_uploader("Archivo base: Batch.xlsx", type=["xlsx"])
+Batch_file = st.file_uploader("Archivo base: Batch.xlsx", type=["xlsx"])
 deposit_file = st.file_uploader("Archivo: Deposit MGT.xls", type=["xls"])
 fund_file = st.file_uploader("Archivo: Fund reason out confirm.xls", type=["xls"])
 customer_file = st.file_uploader("Archivo: Customer refund application query.xls", type=["xls"])
@@ -125,7 +125,7 @@ def validar_divisa(row, payment_request):
 # Validación principal
 if st.button("🔍 Validar archivos"):
     archivos = {
-        "Batch": batch_file,
+        "Batch": Batch_file,
         "Deposit": deposit_file,
         "Fund Reason": fund_file,
         "Customer Refund": customer_file,
@@ -137,7 +137,7 @@ if st.button("🔍 Validar archivos"):
     if faltantes:
         st.warning(f"⚠️ Faltan los siguientes archivos: {', '.join(faltantes)}")
     else:
-        batch = pd.read_excel(batch_file, engine="openpyxl")
+        Batch = pd.read_excel(Batch_file, engine="openpyxl")
         deposit = pd.read_excel(deposit_file, engine="xlrd")
         fund_reason = pd.read_excel(fund_file, engine="xlrd")
         customer_refund = pd.read_excel(customer_file, engine="xlrd")
@@ -147,36 +147,36 @@ if st.button("🔍 Validar archivos"):
 columnas_duplicadas = ["BL", "Fund Registration", "REASON OUT", "Payment Request"]
 
 for col in columnas_duplicadas:
-    if col in batch.columns:
-        batch[col] = batch[col].astype(str)
+    if col in Batch.columns:
+        Batch[col] = Batch[col].astype(str)
     else:
         st.warning(f"⚠️ La columna '{col}' no existe en el archivo Batch.xlsx")
 
-        batch["Duplicados"] = detectar_duplicados(batch, columnas_duplicadas)
-        batch["Valida BL"] = batch["BL"].apply(lambda x: validar_longitud(x, 10))
-        batch["Valida FR"] = batch["Fund Registration"].apply(lambda x: validar_longitud(x, 19))
-        batch["Valida RSO"] = batch["REASON OUT"].apply(lambda x: validar_longitud(x, 15))
-        batch["Valida PR"] = batch["Payment Request"].apply(lambda x: validar_longitud(x, 14))
-        batch["Existe BL"] = batch["BL"].apply(lambda x: validar_bl_multiple(x, deposit["B/L No"]))
-        batch["Description"] = batch.apply(lambda row: "GUA" if row["Existe BL"] == "OK" and row["Fund Registration"] in deposit["Fund Registration"].values else "WP", axis=1)
-        batch["Coincide RSO"] = batch.apply(lambda row: "OK" if str(row["REASON OUT"]).strip() in fund_reason["Reason Out No."].astype(str).str.strip().values else "ERROR", axis=1)
-        batch["Coincide FR"] = batch.apply(lambda row: "OK" if row["Fund Registration"] in fund_reason["Fund Registration"].values else "ERROR", axis=1)
-        batch["FR y Ref 3"] = batch.apply(lambda row: "OK" if row["Fund Registration"] in fund_reason["Ref 3"].astype(str).values else "ERROR", axis=1)
-        batch["BL y Ref 1"] = batch["BL"].apply(lambda x: validar_bl_ref1(x, fund_reason["Ref 1"]))
-        batch["BL y Doc Text"] = batch["BL"].apply(lambda x: validar_bl_doc_text(x, fund_reason["Document Text"]))
-        batch["CR existe"] = batch["Payment Request"].apply(lambda x: "OK" if x in customer_refund["Payment Request No."].values else "ERROR")
-        batch["CR y FR"] = batch.apply(lambda row: "OK" if any(fr.strip() in customer_refund["Fund Registration"].values for fr in str(row["Fund Registration"]).split(",")) else "ERROR", axis=1)
-        batch["CR Y RSO"] = batch.apply(lambda row: "OK" if any(rso.strip() in customer_refund["Reason No."].values for rso in str(row["REASON OUT"]).split()) else "ERROR", axis=1)
-        batch["Cantidad"] = batch.apply(lambda row: validar_cantidad(row, payment_request), axis=1)
-        batch["Divisa"] = batch.apply(lambda row: validar_divisa(row, payment_request), axis=1)
-        batch["Error Cantidad"] = batch.apply(lambda row: "ERROR" if ((pd.isna(row["MXN"]) and pd.isna(row["USD"])) or (row["MXN"] > 0 and row["USD"] > 0)) else "", axis=1)
-        batch["Tipo Cuenta"] = batch["Fund Registration"].apply(lambda x: validar_bank_account(x, fund_register))
+        Batch["Duplicados"] = detectar_duplicados(Batch, columnas_duplicadas)
+        Batch["Valida BL"] = Batch["BL"].apply(lambda x: validar_longitud(x, 10))
+        Batch["Valida FR"] = Batch["Fund Registration"].apply(lambda x: validar_longitud(x, 19))
+        Batch["Valida RSO"] = Batch["REASON OUT"].apply(lambda x: validar_longitud(x, 15))
+        Batch["Valida PR"] = Batch["Payment Request"].apply(lambda x: validar_longitud(x, 14))
+        Batch["Existe BL"] = Batch["BL"].apply(lambda x: validar_bl_multiple(x, deposit["B/L No"]))
+        Batch["Description"] = Batch.apply(lambda row: "GUA" if row["Existe BL"] == "OK" and row["Fund Registration"] in deposit["Fund Registration"].values else "WP", axis=1)
+        Batch["Coincide RSO"] = Batch.apply(lambda row: "OK" if str(row["REASON OUT"]).strip() in fund_reason["Reason Out No."].astype(str).str.strip().values else "ERROR", axis=1)
+        Batch["Coincide FR"] = Batch.apply(lambda row: "OK" if row["Fund Registration"] in fund_reason["Fund Registration"].values else "ERROR", axis=1)
+        Batch["FR y Ref 3"] = Batch.apply(lambda row: "OK" if row["Fund Registration"] in fund_reason["Ref 3"].astype(str).values else "ERROR", axis=1)
+        Batch["BL y Ref 1"] = Batch["BL"].apply(lambda x: validar_bl_ref1(x, fund_reason["Ref 1"]))
+        Batch["BL y Doc Text"] = Batch["BL"].apply(lambda x: validar_bl_doc_text(x, fund_reason["Document Text"]))
+        Batch["CR existe"] = Batch["Payment Request"].apply(lambda x: "OK" if x in customer_refund["Payment Request No."].values else "ERROR")
+        Batch["CR y FR"] = Batch.apply(lambda row: "OK" if any(fr.strip() in customer_refund["Fund Registration"].values for fr in str(row["Fund Registration"]).split(",")) else "ERROR", axis=1)
+        Batch["CR Y RSO"] = Batch.apply(lambda row: "OK" if any(rso.strip() in customer_refund["Reason No."].values for rso in str(row["REASON OUT"]).split()) else "ERROR", axis=1)
+        Batch["Cantidad"] = Batch.apply(lambda row: validar_cantidad(row, payment_request), axis=1)
+        Batch["Divisa"] = Batch.apply(lambda row: validar_divisa(row, payment_request), axis=1)
+        Batch["Error Cantidad"] = Batch.apply(lambda row: "ERROR" if ((pd.isna(row["MXN"]) and pd.isna(row["USD"])) or (row["MXN"] > 0 and row["USD"] > 0)) else "", axis=1)
+        Batch["Tipo Cuenta"] = Batch["Fund Registration"].apply(lambda x: validar_bank_account(x, fund_register))
 
         st.success("✅ Validación completada")
-        st.dataframe(batch)
+        st.dataframe(Batch)
 
         output = BytesIO()
-        batch.to_excel(output, index=False, engine="openpyxl")
+        Batch.to_excel(output, index=False, engine="openpyxl")
         st.download_button(
             label="📥 Descargar archivo validado",
             data=output.getvalue(),
