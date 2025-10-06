@@ -91,8 +91,9 @@ def validar_bl_ref1(bl_value, ref1_column):
     except:
         return "ERROR"
 
-
-bls = [b.strip() for b in str(bl_value).split(",")]
+def validar_bl_doc_text(bl_value, doc_text_column):
+    try:
+        bls = [b.strip() for b in str(bl_value).split(",")]
         if len(bls) <= 1:
             return ""
         adicionales = bls[1:]
