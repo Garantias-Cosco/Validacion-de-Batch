@@ -94,7 +94,7 @@ def validar_bl_doc_text(bl_value, doc_text_column):
     try:
         bls = [b.strip() for b in str(bl_value).split(",")]    
         if len(bls) <= 1:
-            return ""
+    return ""
         adicionales = bls[1:]
         doc_text_values = doc_text_column.dropna().astype(str).apply(
             lambda x: [s for s in x.split() if s.isdigit()]
