@@ -31,8 +31,6 @@ def validar_bl_multiple(bl_value, bl_no_column):
         bls = [str(int(b.strip())) for b in str(bl_value).split(",") if b.strip().isdigit()]
         bl_no_values = bl_no_column.dropna().astype(int).astype(str).values
         return "OK" if all(bl in bl_no_values for bl in bls) else "ERROR"
-    except:
-        return "ERROR"
 
 if st.button("🔍 Validar archivos") and all([batch_file, deposit_file, fund_file, customer_file, payment_file]):
     batch = pd.read_excel(batch_file, engine="openpyxl")
@@ -70,26 +68,12 @@ try:
     bl_int = int(bl_value)
     if bl_int in bl_no_column.dropna().astype(int).values:
         return "OK"
-except:
-    return "ERROR"
-
-def detectar_duplicados(df, columnas):
-    duplicados = []
-    for i, row in df.iterrows():
-        duplicadas = []
-        for col in columnas:
-            if df[col].duplicated(keep=False)[i]:
-                duplicadas.append(col)
-        duplicados.append(", ".join(duplicadas) if duplicadas else "OK")
-    return duplicados
 
 def validar_bl_ref1(bl_value, ref1_column):
     try:
         primer_bl = str(bl_value).split(",")[0].strip()
         primer_bl_num = int(primer_bl)
         return "OK" if primer_bl_num in ref1_column.dropna().astype(int).values else "ERROR"
-    except:
-        return "ERROR"
 def validar_bl_doc_text(bl_value, doc_text_column):
     try:
         bls = [b.strip() for b in str(bl_value).split(",")]    
@@ -104,10 +88,6 @@ def validar_bl_doc_text(bl_value, doc_text_column):
             if any(bl == val for sublist in doc_text_values for val in sublist):
                 encontrados.append(True)
             else:
-                encontrados.append(False)
-        return "OK" if all(encontrados) else "ERROR"
-    except:
-        return "ERROR"
 
     batch["Existe BL"] = batch["BL"].apply(lambda x: validar_bl(x, deposit["B/L No"]))
     batch["Description"] = batch.apply(lambda row: "GUA" if row["Existe BL"] == "OK" and row["Fund Registration"] in deposit["Fund Registration"].values else "WP", axis=1)
@@ -139,10 +119,6 @@ def validar_bl_doc_text(bl_value, doc_text_column):
     )
 else:
     st.info("Por favor, sube todos los archivos antes de validar.")
-                encontrados.append(False)
-        return "OK" if all(encontrados) else "ERROR"
-    except:
-        return "ERROR"
 
 def validar_bank_account(fund_registro, df_fund_register):
     try:
@@ -151,7 +127,6 @@ def validar_bank_account(fund_registro, df_fund_register):
         df_fund_register["Bank Account"] = df_fund_register["Bank Account"].astype(str).str.strip()
         filtro = df_fund_register[df_fund_register["Fund Registration"] == fund_registro]
         if filtro.empty:
-            return "ERROR"
         cuenta = filtro["Bank Account"].values[0]
         if cuenta in ["124180002356385257", "124180002356380294"]:
             return "GUARANTEE"
@@ -162,39 +137,29 @@ def validar_bank_account(fund_registro, df_fund_register):
         elif cuenta == "880285643":
             return "OFT"
         else:
-            return "ERROR"
     except Exception:
-        return "ERROR"
 
 def validar_cantidad(row, payment_request):
     try:
         filtro = payment_request[payment_request["Application  Number"] == row["Payment Request"]]
         if filtro.empty:
-            return "ERROR"
         monto = filtro["Refund Amount"].values[0]
         if row["MXN"] > 0:
             return "OK" if row["MXN"] == monto else "ERROR"
         elif row["USD"] > 0:
             return "OK" if row["USD"] == monto else "ERROR"
         else:
-            return "ERROR"
-    except:
-        return "ERROR"
 
 def validar_divisa(row, payment_request):
     try:
         filtro = payment_request[payment_request["Application  Number"] == row["Payment Request"]]
         if filtro.empty:
-            return "ERROR"
         moneda = filtro["Application Currency"].values[0]
         if row["MXN"] > 0:
             return "OK" if moneda == "MXN" else "ERROR"
         elif row["USD"] > 0:
             return "OK" if moneda == "USD" else "ERROR"
         else:
-            return "ERROR"
-    except:
-        return "ERROR"
 
 # Validación principal
 if st.button("🔍 Validar archivos"):
