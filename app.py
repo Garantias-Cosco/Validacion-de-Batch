@@ -143,8 +143,12 @@ if st.button("🔍 Validar archivos"):
         fund_register = pd.read_excel(fund_register_file, engine="xlrd", dtype=str)
 
         columnas_duplicadas = ["BL", "Fund Registration", "REASON OUT", "Payment Request"]
-        for col in columnas_duplicadas:
-            batch[col] = batch[col].astype(str)
+    for col in columnas_duplicadas:
+    if col in batch.columns:
+        batch[col] = batch[col].astype(str)
+    else:
+        st.warning(f"⚠️ La columna '{col}' no existe en el archivo Batch.xlsx")
+
 
         batch["Duplicados"] = detectar_duplicados(batch, columnas_duplicadas)
         batch["Valida BL"] = batch["BL"].apply(lambda x: validar_longitud(x, 10))
