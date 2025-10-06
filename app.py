@@ -93,7 +93,7 @@ def validar_bl_ref1(bl_value, ref1_column):
 def validar_bl_doc_text(bl_value, doc_text_column):
     try:
         bls = [b.strip() for b in str(bl_value).split(",")]
-            if len(bls) <= 1:
+          if len(bls) <= 1:
             return ""
         adicionales = bls[1:]
         doc_text_values = doc_text_column.dropna().astype(str).apply(
