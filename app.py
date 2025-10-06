@@ -32,7 +32,6 @@ def validar_bl_multiple(bl_value, bl_no_column):
         return "OK" if all(bl in bl_no_values for bl in bls) else "ERROR"
     except:
         return "ERROR"
-
 def detectar_duplicados(df, columnas):
     duplicados = []
     for i, row in df.iterrows():
