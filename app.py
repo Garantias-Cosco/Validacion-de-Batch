@@ -143,8 +143,7 @@ if st.button("🔍 Validar archivos"):
         fund_register = pd.read_excel(fund_register_file, engine="xlrd", dtype=str)
 
         columnas_duplicadas = ["BL", "Fund Registration", "REASON OUT", "Payment Request"]
- 
-for col in columnas_duplicadas:
+ for col in columnas_duplicadas:
     if col in batch.columns:
         batch[col] = batch[col].astype(str)
     else:
