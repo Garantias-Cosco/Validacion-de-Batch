@@ -91,9 +91,8 @@ def validar_bl_ref1(bl_value, ref1_column):
     except:
         return "ERROR"
 
-def validar_bl_doc_text(bl_value, doc_text_column):
-    try:
-        bls = [b.strip() for b in str(bl_value).split(",")]
+
+bls = [b.strip() for b in str(bl_value).split(",")]
         if len(bls) <= 1:
             return ""
         adicionales = bls[1:]
@@ -102,10 +101,11 @@ def validar_bl_doc_text(bl_value, doc_text_column):
         for bl in adicionales:
             if any(bl == val for sublist in doc_text_values for val in sublist):
                 encontrados.append(True)
-else:
-                return "NO"
-        except:
-            return "NO"
+            else:
+                encontrados.append(False)
+        return "OK" if all(encontrados) else "ERROR"
+    except:
+        return "ERROR"
 
     batch["Existe BL"] = batch["BL"].apply(lambda x: validar_bl(x, deposit["B/L No"]))
     batch["Description"] = batch.apply(lambda row: "GUA" if row["Existe BL"] == "OK" and row["Fund Registration"] in deposit["Fund Registration"].values else "WP", axis=1)
